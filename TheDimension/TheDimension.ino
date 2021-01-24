@@ -4,6 +4,7 @@
 #include <Arduino.h>
 #include <SPI.h>
 
+//เรียก i2c addr 0x70 
 #define I2CScanner 0x70
 //เรียกใช้ OLED
 Adafruit_SSD1306 display0 = Adafruit_SSD1306(128, 32, &Wire);
@@ -11,6 +12,25 @@ Adafruit_SSD1306 display1 = Adafruit_SSD1306(128, 32, &Wire);
 Adafruit_SSD1306 display2 = Adafruit_SSD1306(128, 32, &Wire);
 Adafruit_SSD1306 display3 = Adafruit_SSD1306(128, 32, &Wire);
 Adafruit_SSD1306 display4 = Adafruit_SSD1306(128, 32, &Wire);
+//เรียกใช้ Pin Button
+int ButtonBlack = 14;
+int ButtonRed = 15;
+int ButtonYellow = 16;
+int ButtonBlue = 17;
+int ButtonGreen = 18;
+//เรียกใช้ RGB pin
+int RGB_R_Player1 = 2;
+int RGB_G_Player1 = 3;
+int RGB_B_Player1 = 4;
+int RGB_R_Player2 = 5;
+int RGB_G_Player2 = 6;
+int RGB_B_Player2 = 7;
+int RGB_R_Player3 = 8;
+int RGB_G_Player3 = 9;
+int RGB_B_Player3 = 10;
+int RGB_R_Player4 = 11;
+int RGB_G_Player4 = 12;
+int RGB_B_Player4 = 13;
 //Dice For Random-----------------------------------------------------------------------------
 //1
 const unsigned char OneDice [] PROGMEM = {
@@ -433,6 +453,19 @@ void TCA9548A(uint8_t bus)
   Wire.beginTransmission(0x70);
   Wire.write(1 << bus);
   Wire.endTransmission();
+  //RGB
+  pinMode(RGB_R_Player1 , OUTPUT);
+  pinMode(RGB_G_Player1 , OUTPUT);
+  pinMode(RGB_B_Player1 , OUTPUT);
+  pinMode(RGB_R_Player2 , OUTPUT);
+  pinMode(RGB_G_Player2 , OUTPUT);
+  pinMode(RGB_B_Player2 , OUTPUT);
+  pinMode(RGB_R_Player3 , OUTPUT);
+  pinMode(RGB_R_Player3 , OUTPUT);
+  pinMode(RGB_B_Player3 , OUTPUT);
+  pinMode(RGB_R_Player4 , OUTPUT);
+  pinMode(RGB_G_Player4 , OUTPUT);
+  pinMode(RGB_B_Player4 , OUTPUT);
 }
 
 void setup(){
