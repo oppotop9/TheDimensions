@@ -453,19 +453,11 @@ void TCA9548A(uint8_t bus)
   Wire.beginTransmission(0x70);
   Wire.write(1 << bus);
   Wire.endTransmission();
-  //RGB
-  pinMode(RGB_R_Player1 , OUTPUT);
-  pinMode(RGB_G_Player1 , OUTPUT);
-  pinMode(RGB_B_Player1 , OUTPUT);
-  pinMode(RGB_R_Player2 , OUTPUT);
-  pinMode(RGB_G_Player2 , OUTPUT);
-  pinMode(RGB_B_Player2 , OUTPUT);
-  pinMode(RGB_R_Player3 , OUTPUT);
-  pinMode(RGB_R_Player3 , OUTPUT);
-  pinMode(RGB_B_Player3 , OUTPUT);
-  pinMode(RGB_R_Player4 , OUTPUT);
-  pinMode(RGB_G_Player4 , OUTPUT);
-  pinMode(RGB_B_Player4 , OUTPUT);
+}
+//dice
+char *Dice_Array[] = { "OneDice" , "TwoDice","ThreeDice","FourDice","FiveDice","SixDice" };
+void Dice(){
+
 }
 
 void setup(){
@@ -481,8 +473,28 @@ void setup(){
   display3.begin(I2CScanner, 0x3C);
   TCA9548A(4);
   display4.begin(I2CScanner, 0x3C);
+  //Button
+  pinMode(14 , INPUT_PULLUP);
+  pinMode(15 , INPUT_PULLUP);
+  pinMode(16 , INPUT_PULLUP);
+  pinMode(17 , INPUT_PULLUP);
+  pinMode(18 , INPUT_PULLUP);
+  //RGB
+  pinMode(2 , OUTPUT);
+  pinMode(3 , OUTPUT);
+  pinMode(4 , OUTPUT);
+  pinMode(5 , OUTPUT);
+  pinMode(5 , OUTPUT);
+  pinMode(7 , OUTPUT);
+  pinMode(8 , OUTPUT);
+  pinMode(9 , OUTPUT);
+  pinMode(10 , OUTPUT);
+  pinMode(11 , OUTPUT);
+  pinMode(12 , OUTPUT);
+  pinMode(13 , OUTPUT); 
 }
 
 void loop(){
 
 }
+
