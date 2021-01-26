@@ -18,7 +18,7 @@ Serial.begin(9600);
 }
 
 void loop(){
-    
+XFreze = XFreze + 1 ;
 if (Xnum<41) {
         if(Xnum==1||Xnum==11||Xnum==21||Xnum==31)
         {
@@ -50,19 +50,20 @@ if (Xnum<41) {
             //สุ่มสกิล
             //กดปุ่ม
             roll = random(1,6);
-            if(roll == 1)
+
+            if(roll == 1)   //Freeze
             {
                 XFreze = (XFreze * 0) - 1 ;
                 //next
             }
-            else if (roll == 2)
+            else if (roll == 2)     //Toxic
             {
                 XHp = XHp - 2 ;
                 //next
             }
-            else if (roll == 3)
+            else if (roll == 3)     // Rewind
             {
-                if(Xnum == 4||Xnum == 14||Xnum == 24||Xnum == 34)
+                if(Xnum == 4||Xnum == 14||Xnum == 24||Xnum == 34)   // GetGem
                 {
                     XGem = XGem + 1 ;
                     if(Xnum == 4)
@@ -86,7 +87,7 @@ if (Xnum<41) {
                         //next
                     }
                 }
-                else if(Xnum == 8||Xnum == 18)
+                else if(Xnum == 8||Xnum == 18)      // Heal
                 {
                     XHp = XHp + 1 ;
                     if(Xnum = 8)
@@ -100,7 +101,7 @@ if (Xnum<41) {
                         //next
                     }
                 }
-                else if(Xnum == 28||Xnum == 38)
+                else if(Xnum == 28||Xnum == 38)     // Damage
                 {
                     XHp = XHp - 1 ;
                     if(Xnum == 28)
@@ -116,16 +117,16 @@ if (Xnum<41) {
                 }
                 
             }
-            else if (roll == 4)
+            else if (roll == 4)     // Shield
             {
                 XShield = 1 ;
                 //next
             }
-            else if (roll == 5)
+            else if (roll == 5)     //Double
             {
                 //next
             }
-            else if (roll == 6)
+            else if (roll == 6)     //Power shot
             {
                 if(Xnum == 4||Xnum == 8)
                 {
