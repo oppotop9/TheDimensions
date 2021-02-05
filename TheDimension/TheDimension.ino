@@ -754,6 +754,19 @@ Wire.begin(); //ใช้คำสั่งเริ่มต้นการใ�
   TCA9548A(4);
   TheDimenstion4();
   display4.display();
+//---------------RGB---------------------
+pinMode(RGB_R_Player1,OUTPUT);
+pinMode(RGB_G_Player1,OUTPUT);
+pinMode(RGB_B_Player1,OUTPUT);
+pinMode(RGB_R_Player2,OUTPUT);
+pinMode(RGB_G_Player2,OUTPUT);
+pinMode(RGB_B_Player2,OUTPUT);
+pinMode(RGB_R_Player3,OUTPUT);
+pinMode(RGB_G_Player3,OUTPUT);
+pinMode(RGB_B_Player3,OUTPUT);
+pinMode(RGB_R_Player4,OUTPUT);
+pinMode(RGB_G_Player4,OUTPUT);
+pinMode(RGB_B_Player4,OUTPUT);
 
 //------------------------------------------------------
 Anum=Astart; //player1
@@ -1003,6 +1016,18 @@ SetPlayer4();
   display4.println(DDoor);
   display4.display();
 }
+analogWrite(RGB_R_Player1,255);
+analogWrite(RGB_G_Player1,210);
+analogWrite(RGB_B_Player1,0);
+analogWrite(RGB_R_Player2,150);
+analogWrite(RGB_G_Player2,0);
+analogWrite(RGB_B_Player2,255);
+analogWrite(RGB_R_Player3,0);
+analogWrite(RGB_G_Player3,255);
+analogWrite(RGB_B_Player3,0);
+analogWrite(RGB_R_Player4,255);
+analogWrite(RGB_G_Player4,140);
+analogWrite(RGB_B_Player4,0);
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
 void loop(){
