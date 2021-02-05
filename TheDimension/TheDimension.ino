@@ -13,11 +13,10 @@ Adafruit_SSD1306 display2 = Adafruit_SSD1306(128, 32, &Wire);
 Adafruit_SSD1306 display3 = Adafruit_SSD1306(128, 32, &Wire);
 Adafruit_SSD1306 display4 = Adafruit_SSD1306(128, 32, &Wire);
 //เรียกใช้ Pin Button
-#define ButtonBlack  14
+#define ButtonBlue 14
 #define ButtonRed 15
-#define ButtonBlue 17
 #define ButtonYellow  16
-#define ButtonGreen  18
+#define ButtonGreen  17
 int ButtonA = 0; //1
 //----------------------------------------------
 int Xnum;
@@ -27,8 +26,10 @@ int XGem;
 int XShield;
 int XFreze;
 int Xstart;
+int XnextGem;
 
 int roll;
+int rollS;
 int next;
 int End;
 
@@ -68,8 +69,32 @@ int DGem;
 int DDoor;
 int DShield;
 int DFreze;
-//รอลบ
-int XnextGem;
+
+int AHoldInTime;
+int AToxicZone;
+int ARewindTime;
+int ADoubleTime;
+int ATimeBolt;
+
+int BHoldInTime;
+int BToxicZone;
+int BRewindTime;
+int BDoubleTime;
+int BTimeBolt;
+
+int CHoldInTime;
+int CToxicZone;
+int CRewindTime;
+int CDoubleTime;
+int CTimeBolt;
+
+int DHoldInTime;
+int DToxicZone;
+int DRewindTime;
+int DDoubleTime;
+int DTimeBolt;
+
+
 //เรียกใช้ RGB pin
 int RGB_R_Player1 = 2;
 int RGB_G_Player1 = 3;
@@ -700,6 +725,7 @@ void TCA9548A(uint8_t bus)
 //Set up-----------------------------------------------------------------------------------
 void setup(){
 Serial.begin(9600);
+randomSeed(analogRead(0));
 Wire.begin(); //ใช้คำสั่งเริ่มต้นการใช้งาน I2C โดยใช้ค่าในพารามิเตอร์เป็นค่าเริ่มต้นทั้งหมด
 //Set multiplexer to channel and initialize OLED-() with I2C addr 0x3C
   TCA9548A(0);
@@ -737,10 +763,8 @@ Dnum=Dstart; //player4
 
 ButtonA=0;
     for(int i = 0 ; i <=4 ; i++){
-if(digitalRead(ButtonBlack)==0 && digitalRead(ButtonRed)==0){
-
-while (digitalRead(ButtonBlack)==0  && digitalRead(ButtonRed)==0 ) {}
-
+if(digitalRead(ButtonBlue)==0 && digitalRead(ButtonRed)==0){
+while (digitalRead(ButtonBlue)==0  && digitalRead(ButtonRed)==0 ) {}
 }
 if (i == 1 && digitalRead(ButtonRed)==0 ) {
   TCA9548A(0);
@@ -802,90 +826,194 @@ TCA9548A(0);
  if(ButtonA==0) {
 AHp = 5;
 BHp = 5;
-
+AGem = 0;
+BGem = 0;
+ADoor = 0;
+BDoor = 0;
 Serial.println("\t2 Player");
 TCA9548A(1);
 SetPlayer1();
   display1.setCursor(15, 13);
   display1.setTextColor(1);
   display1.setTextSize(1);
-  display1.println("5");
-display1.display();
+  display1.println(AHp);
+  display1.setCursor(22, 25);
+  display1.setTextColor(1);
+  display1.setTextSize(1); 
+  display1.println(AGem);
+  display1.setCursor(67, 25);
+  display1.setTextColor(1,0);
+  display1.setTextSize(1);
+  display1.println(ADoor);
+  display1.display();
 TCA9548A(2);
 SetPlayer2();
   display2.setCursor(15, 13);
   display2.setTextColor(1);
   display2.setTextSize(1);
-  display2.println("5");
-display2.display();
+  display2.println(BHp);
+  display2.setCursor(22, 25);
+  display2.setTextColor(1);
+  display2.setTextSize(1); 
+  display2.println(BGem);
+  display2.setCursor(67, 25);
+  display2.setTextColor(1,0);
+  display2.setTextSize(1);
+  display2.println(BDoor);
+  display2.display();
+  TCA9548A(3);
+  TheDimenstion3();
+  display3.display();
+  TCA9548A(4);
+  TheDimenstion4();
+  display4.display();
 }
 else if(ButtonA==3) {
 AHp = 5;
 BHp = 5;
 CHp = 5;
+AGem = 0;
+BGem = 0;
+CGem = 0;
+ADoor = 0;
+BDoor = 0;
+CDoor = 0;
 Serial.println("\t3 Player");
 TCA9548A(1);
 SetPlayer1();
   display1.setCursor(15, 13);
   display1.setTextColor(1);
   display1.setTextSize(1);
-  display1.println("5");
-display1.display();
+  display1.println(AHp);
+  display1.setCursor(22, 25);
+  display1.setTextColor(1);
+  display1.setTextSize(1); 
+  display1.println(AGem);
+  display1.setCursor(67, 25);
+  display1.setTextColor(1,0);
+  display1.setTextSize(1);
+  display1.println(ADoor);
+  display1.display();
 TCA9548A(2);
 SetPlayer2();
   display2.setCursor(15, 13);
   display2.setTextColor(1);
   display2.setTextSize(1);
-  display2.println("5");
-display2.display();
+  display2.println(BHp);
+  display2.setCursor(22, 25);
+  display2.setTextColor(1);
+  display2.setTextSize(1); 
+  display2.println(BGem);
+  display2.setCursor(67, 25);
+  display2.setTextColor(1,0);
+  display2.setTextSize(1);
+  display2.println(BDoor);
+  display2.display();
 TCA9548A(3);
 SetPlayer3();
   display3.setCursor(15, 13);
   display3.setTextColor(1);
   display3.setTextSize(1);
-  display3.println("5");
-display3.display();
+  display3.println(CHp);
+  display3.setCursor(22, 25);
+  display3.setTextColor(1);
+  display3.setTextSize(1); 
+  display3.println(CGem);
+  display3.setCursor(67, 25);
+  display3.setTextColor(1,0);
+  display3.setTextSize(1);
+  display3.println(CDoor);
+  display3.display();
+TCA9548A(4);
+TheDimenstion4();
+display4.display();
 }
 else if(ButtonA==4) {
 AHp = 5;
 BHp = 5;
 CHp = 5;
 DHp = 5;
-
+AGem = 0;
+BGem = 0;
+CGem = 0;
+DGem = 0;
+ADoor = 0;
+BDoor = 0;
+CDoor = 0;
+DDoor = 0;
 Serial.println("\t4 Player");
 TCA9548A(1);
 SetPlayer1();
   display1.setCursor(15, 13);
   display1.setTextColor(1);
   display1.setTextSize(1);
-  display1.println("5");
-display1.display();
+  display1.println(AHp);
+  display1.setCursor(22, 25);
+  display1.setTextColor(1);
+  display1.setTextSize(1); 
+  display1.println(AGem);
+  display1.setCursor(67, 25);
+  display1.setTextColor(1,0);
+  display1.setTextSize(1);
+  display1.println(ADoor);
+  display1.display();
 TCA9548A(2);
 SetPlayer2();
   display2.setCursor(15, 13);
   display2.setTextColor(1);
   display2.setTextSize(1);
-  display2.println("5");
-display2.display();
+  display2.println(BHp);
+  display2.setCursor(22, 25);
+  display2.setTextColor(1);
+  display2.setTextSize(1); 
+  display2.println(BGem);
+  display2.setCursor(67, 25);
+  display2.setTextColor(1,0);
+  display2.setTextSize(1);
+  display2.println(BDoor);
+  display2.display();
 TCA9548A(3);
 SetPlayer3();
   display3.setCursor(15, 13);
   display3.setTextColor(1);
   display3.setTextSize(1);
-  display3.println("5");
+  display3.println(CHp);
+  display3.setCursor(22, 25);
+  display3.setTextColor(1);
+  display3.setTextSize(1); 
+  display3.println(CGem);
+  display3.setCursor(67, 25);
+  display3.setTextColor(1,0);
+  display3.setTextSize(1);
+  display3.println(CDoor);
 display3.display();
 TCA9548A(4);
 SetPlayer4();
   display4.setCursor(15, 13);
   display4.setTextColor(1);
   display4.setTextSize(1);
-  display4.println("5");
-display4.display();
+  display4.println(DHp);
+  display4.setCursor(22, 25);
+  display4.setTextColor(1);
+  display4.setTextSize(1); 
+  display4.println(DGem);
+  display4.setCursor(67, 25);
+  display4.setTextColor(1,0);
+  display4.setTextSize(1);
+  display4.println(DDoor);
+  display4.display();
 }
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
 void loop(){
     do{
+        if (AFreze==15||BFreze==15||CFreze==15||DFreze==15) {
+        BossA=1;
+        BossB=1;
+        BossC=1;
+        BossD=1;
+        Serial.println("\tBoss Spawn");
+        }
         if(AHp>0) {
         AOperation();
             if(BHp>0) {
@@ -969,8 +1097,8 @@ void loop(){
                 }
             }   
         }
-if(AHp>0 && BHp<1 && CHp<1 && DHp<1 || ADoor>=7 && BDoor<7 && CDoor<7 && DDoor<7){
-    //Serial.println("A win");
+if(ADoor >= 7 && BDoor<7 && CDoor<7 && DDoor<7){
+    delay(500);
     TCA9548A(1);
     display1.clearDisplay();
     display1.setCursor(10,11);
@@ -978,11 +1106,33 @@ if(AHp>0 && BHp<1 && CHp<1 && DHp<1 || ADoor>=7 && BDoor<7 && CDoor<7 && DDoor<7
     display1.setTextSize(2);
     display1.print(" WIN ");
     display1.display();
-    End++;
+    TCA9548A(2);
+    display2.clearDisplay();
+    display2.setCursor(0,11);
+    display2.setTextColor(1);
+    display2.setTextSize(2);
+    display2.print(" GAME OVER ");
+    display2.display();
+    TCA9548A(3);
+    display3.clearDisplay();
+    display3.setCursor(0,11);
+    display3.setTextColor(1);
+    display3.setTextSize(2);
+    display3.print(" GAME OVER ");
+    display3.display();
+    TCA9548A(4);
+    display4.clearDisplay();
+    display4.setCursor(0,11);
+    display4.setTextColor(1);
+    display4.setTextSize(2);
+    display4.print(" GAME OVER ");
+    display4.display();
+    //End++;
+     exit(0);
 }
-else if(AHp<1 && BHp>0 && CHp<1 && DHp<1 || ADoor<7 && BDoor>=7 && CDoor<7 && DDoor<7)
+else if(ADoor<7 && BDoor>=7 && CDoor<7 && DDoor<7)
 {
-    //Serial.println("B win");
+    delay(500);
     TCA9548A(2);
     display2.clearDisplay();
     display2.setCursor(10,11);
@@ -990,35 +1140,137 @@ else if(AHp<1 && BHp>0 && CHp<1 && DHp<1 || ADoor<7 && BDoor>=7 && CDoor<7 && DD
     display2.setTextSize(2);
     display2.print(" WIN ");
     display2.display();
-    End++;
+    TCA9548A(1);
+    display1.clearDisplay();
+    display1.setCursor(0,11);
+    display1.setTextColor(1);
+    display1.setTextSize(2);
+    display1.print(" GAME OVER ");
+    display1.display();
+    TCA9548A(3);
+    display3.clearDisplay();
+    display3.setCursor(0,11);
+    display3.setTextColor(1);
+    display3.setTextSize(2);
+    display3.print(" GAME OVER ");
+    display3.display();
+    TCA9548A(4);
+    display4.clearDisplay();
+    display4.setCursor(0,11);
+    display4.setTextColor(1);
+    display4.setTextSize(2);
+    display4.print(" GAME OVER ");
+    display4.display();
+    //End++;
+     exit(0);
 }
-else if(AHp<1 && BHp<1 && CHp>0 && DHp<1 || ADoor<7 && BDoor<7 && CDoor>=7 && DDoor<7)
+else if(ADoor<7 && BDoor<7 && CDoor>=7 && DDoor<7)
 {
-    //Serial.println("C win");
-        TCA9548A(3);
+    delay(500);
+    TCA9548A(3);
     display3.clearDisplay();
     display3.setCursor(10,11);
     display3.setTextColor(1);
     display3.setTextSize(2);
     display3.print(" WIN ");
     display3.display();
-    End++;
+    TCA9548A(2);
+    display2.clearDisplay();
+    display2.setCursor(0,11);
+    display2.setTextColor(1);
+    display2.setTextSize(2);
+    display2.print(" GAME OVER ");
+    display2.display();
+    TCA9548A(1);
+    display1.clearDisplay();
+    display1.setCursor(0,11);
+    display1.setTextColor(1);
+    display1.setTextSize(2);
+    display1.print(" GAME OVER ");
+    display1.display();
+    TCA9548A(4);
+    display4.clearDisplay();
+    display4.setCursor(0,11);
+    display4.setTextColor(1);
+    display4.setTextSize(2);
+    display4.print(" GAME OVER ");
+    display4.display();
+    //End++;
+     exit(0);
 }
-else if(AHp<1 && BHp<1 && CHp<1 && DHp>0 || ADoor<7 && BDoor<7 && CDoor<7 && DDoor>=7)
+else if(ADoor<7 && BDoor<7 && CDoor<7 && DDoor>=7)
 {
-    //Serial.println("D win");
-        TCA9548A(4);
+    delay(500);
+    TCA9548A(4);
     display4.clearDisplay();
     display4.setCursor(10,11);
     display4.setTextColor(1);
     display4.setTextSize(2);
     display4.print(" WIN ");
     display4.display();
-    End++;
+    TCA9548A(2);
+    display2.clearDisplay();
+    display2.setCursor(0,11);
+    display2.setTextColor(1);
+    display2.setTextSize(2);
+    display2.print(" GAME OVER ");
+    display2.display();
+    TCA9548A(3);
+    display3.clearDisplay();
+    display3.setCursor(0,11);
+    display3.setTextColor(1);
+    display3.setTextSize(2);
+    display3.print(" GAME OVER ");
+    display3.display();
+    TCA9548A(1);
+    display1.clearDisplay();
+    display1.setCursor(0,11);
+    display1.setTextColor(1);
+    display1.setTextSize(2);
+    display1.print(" GAME OVER ");
+    display1.display();
+    //End++;
+     exit(0);
+}if(AHp < 1){
+    delay(500);
+    TCA9548A(1);
+    display1.clearDisplay();
+    display1.setCursor(0,11);
+    display1.setTextColor(1);
+    display1.setTextSize(2);
+    display1.print(" GAME OVER ");
+    display1.display();
+}if(BHp < 1){
+    delay(500);
+    TCA9548A(2);
+    display2.clearDisplay();
+    display2.setCursor(0,11);
+    display2.setTextColor(1);
+    display2.setTextSize(2);
+    display2.print(" GAME OVER ");
+    display2.display();
+}if(CHp < 1){
+    delay(500);
+    TCA9548A(3);
+    display3.clearDisplay();
+    display3.setCursor(0,11);
+    display3.setTextColor(1);
+    display3.setTextSize(2);
+    display3.print(" GAME OVER ");
+    display3.display(); 
+}if(DHp < 1){
+    delay(500);
+    TCA9548A(4);
+    display4.clearDisplay();
+    display4.setCursor(0,11);
+    display4.setTextColor(1);
+    display4.setTextSize(2);
+    display4.print(" GAME OVER ");
+    display4.display();
 }
     }while(End<1);
 }
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void AOperation()
 {
  Xnum=0;
@@ -1030,28 +1282,30 @@ void AOperation()
  Xstart=0;
 do {
 XFreze = XFreze + 1 ;
+AFreze=XFreze;
+ Serial.println(AFreze);
 if (XFreze<1) {
-next++;
+        next++;
 Serial.println("\tFreze hold for next round");
-delay(1000);
-
 }
-
 else if (XFreze>0) {
-roll=random(1,6);
+roll=random(1,7);
 
 while (digitalRead(ButtonYellow)==0) {
 //จอบอกให้กดปุ่ม 
 Serial.println("\t\tPush Button to play");
-delay(1000);
+delay(500);
+
 }
-Anum+=roll;
+ Anum+=roll;
  Xnum=Anum;
  XHp=AHp;
  XDoor=ADoor;
  XGem=AGem;
  XShield=AShield;
  Xstart=Astart;
+ XFreze=AFreze;
+
 
 while (Xnum>40) {
 
@@ -1070,7 +1324,7 @@ Serial.println(Xnum);
             XDoor = XDoor+XGem ;
             XGem  = 0 ;
             Serial.println(" Send Gem to door ");
-            delay(1000);
+            delay(500);
         }
         else if(Xnum==2||Xnum==12||Xnum==22||Xnum==32)
         {
@@ -1079,13 +1333,13 @@ Serial.println(Xnum);
             {
                 XGem = XGem - 1 ;
                 Serial.println(" Lost one Gem");
-                delay(1000);
+                delay(500);
                 //next
             }
             else 
             {
                 Serial.println("No Gem pass");
-                delay(1000);
+                delay(500);
                 //next
             }
         }
@@ -1094,40 +1348,56 @@ Serial.println(Xnum);
             //ได้หิน
             XGem = XGem + 1 ;
             Serial.println(" Get one Gem");
-            delay(1000);
+            delay(500);
             //next
         }
         else if(Xnum==4||Xnum==8||Xnum==14||Xnum==18||Xnum==24||Xnum==28||Xnum==34||Xnum==38)
         {
             //สุ่มสกิล
             //กดปุ่ม
-            roll = random(1,6);
+            rollS = random(1,7);
             while (digitalRead(ButtonYellow)==0) {
             //จอบอกให้กดปุ่ม
             Serial.println("\t\tPush Button to play");
-            delay(1000);
+            delay(500);
             }
-            Serial.println(roll);
-            if(roll == 1)   //Freeze
+            Serial.println(rollS);
+            if(rollS == 1  )   //Freeze
             {
-                XFreze = (XFreze * 0) - 1 ;
+                AHoldInTime = 1 ;
+
+                XFreze =  - 1 ;
+                AFreze=XFreze;
                 Serial.println("\t*Freze*");
-                
+                TCA9548A(1);
+                display1.clearDisplay();
+                display1.setCursor(27,11);
+                display1.setTextColor(1);
+                display1.setTextSize(2);
+                display1.println("Freze");
+                //display1.println(AFreze);
+                display1.display();
+                break;;
                 //next
             }
-            else if (roll == 2)     //Toxic
+            else if (rollS == 2)     //Toxic
             {
+                AToxicZone = 1 ;
+
                 XHp = XHp - 2 ;
                 Serial.println("\t*Toxic*");
                 //next
             }
-            else if (roll == 3)     // Rewind
+            else if (rollS == 3)     // Rewind
             {
-                Serial.println("\t*Rewind*");
+                ARewindTime = 1;
+                Serial.println("\t*Rewind*"); 
                 if(Xnum == 4||Xnum == 14||Xnum == 24||Xnum == 34)   // GetGem
                 {
                     XGem = XGem + 1 ;
                     Serial.println("\t*And get Gem*");
+                    
+  
                     if(Xnum == 4)
                     {
                         Xnum = 3 ;
@@ -1181,14 +1451,16 @@ Serial.println(Xnum);
                 }
                 
             }
-            else if (roll == 4)     // Shield
+            else if (rollS == 4)     // Shield
             {
                 XShield = 1 ;
                 Serial.println("\t*Get Shield*");
                 //next
             }
-            else if (roll == 5)     //Triple
+            else if (rollS == 5)     //Triple
             {
+                ADoubleTime = 1 ;
+
                 Serial.println("\t*Triple*");
                 if(Xnum == 8||Xnum == 18||Xnum == 28||Xnum == 38)   // Door
                 {
@@ -1249,8 +1521,9 @@ Serial.println(Xnum);
                 //next
             }
 
-            else if (roll == 6)     //Power shot
+            else if (rollS == 6)     //Power shot
             {
+                ATimeBolt = 1;
                 Serial.println("\t*Power Shot*");
                 if(Xnum == 4||Xnum == 8)
                 {
@@ -1440,9 +1713,45 @@ Anum=Xnum;
  AFreze=XFreze;
  Serial.print("\tYour position = ");
  Serial.print(Anum);
+  if(roll == 1){
+      TCA9548A(0);
+      display0.clearDisplay();
+      delay(100);
+      display0.drawBitmap(0, 0, OneDice, 128, 64, 1);
+      display0.display();
+  }else if(roll == 2){
+      TCA9548A(0);
+      display0.clearDisplay();
+      delay(100);
+      display0.drawBitmap(0, 0, TwoDice, 128, 64, 1);
+      display0.display();
+  }else if(roll == 3){
+      TCA9548A(0);
+      display0.clearDisplay();
+      delay(100);
+      display0.drawBitmap(0, 0, ThreeDice, 128, 64, 1);
+      display0.display();
+  }else if(roll == 4){
+      TCA9548A(0);
+      display0.clearDisplay();
+      delay(100);
+      display0.drawBitmap(0, 0, FourDice, 128, 64, 1);
+      display0.display();
+  }else if(roll == 5){
+      TCA9548A(0);
+      display0.clearDisplay();
+      delay(100);
+      display0.drawBitmap(0, 0, FiveDice, 128, 64, 1);
+      display0.display();
+  }else if(roll == 6){
+      TCA9548A(0);
+      display0.clearDisplay();
+      delay(100);
+      display0.drawBitmap(0, 0, SixDice, 128, 64, 1);
+      display0.display();
+  }
   TCA9548A(1);
   display1.clearDisplay();
-  display1.drawBitmap(0, 0, OledToxicZone, 128, 32, 1);
   display1.setCursor(0, 1);
   display1.setTextColor(1);
   display1.setTextSize(1);
@@ -1465,18 +1774,17 @@ Anum=Xnum;
   display1.setTextColor(1);
   display1.setTextSize(1); 
   display1.println(AGem);
-
   //
   display1.setCursor(34, 0);
   display1.setTextColor(2);
   display1.setTextSize(3);
   display1.println("(  )");
-  display1.setCursor(60, 0);
-  display1.setTextColor(1);
+  display1.setCursor(53, 0);
+display1.setTextColor(1);
   display1.setTextSize(3);
   display1.println(Anum);
   //
-  display1.setCursor(54, 25);
+  display1.setCursor(52, 25);
   display1.setTextColor(1,0);
   display1.setTextSize(1);
   display1.println("[   ]");
@@ -1484,9 +1792,35 @@ Anum=Xnum;
   display1.setTextColor(1,0);
   display1.setTextSize(1);
   display1.println(ADoor);
+  //
+  if (AShield == 1) {
+  Status_Shield1();
+  }
+  if(AHoldInTime == 1 && rollS == 1 && (Anum == 4 || Anum == 8 || Anum == 14 || Anum == 18 || Anum == 24 || Anum == 28 || Anum ==34 || Anum == 38)){
+                    display1.drawBitmap(0, 0, OledHoldInTime, 128, 32, 1);
+    }else if(AToxicZone == 1 && rollS == 2 && (Anum == 4 || Anum == 8 || Anum == 14 || Anum == 18 || Anum == 24 || Anum == 28 || Anum ==34 || Anum == 38)){
+                    display1.drawBitmap(0, 0, OledToxicZone, 128, 32, 1);
+    }else if(ARewindTime == 1 && rollS == 3 && (Anum == 4  || Anum == 8 || Anum == 14 || Anum == 18 || Anum == 24 || Anum == 28 || Anum ==34 || Anum == 38 || Anum == 3 || Anum == 7 || Anum == 13 || Anum == 17 || Anum == 23 || Anum == 27 || Anum == 33 || Anum == 37)){
+                    display1.drawBitmap(0, 0, OledRewindTime, 128, 32, 1);
+    }else if(rollS == 4 && (Anum == 4 || Anum == 8 || Anum == 14 || Anum == 18 || Anum == 24 || Anum == 28 || Anum ==34 || Anum == 38)){
+                    display1.drawBitmap(0, 0, OledProtectYourTime, 128, 32, 1);
+    }else if(ADoubleTime == 1 && rollS == 5 && (Anum == 4 || Anum ==7 || Anum == 8 || Anum == 11 || Anum == 14 || Anum == 17 || Anum == 18 || Anum == 21 || Anum == 24 || Anum == 27 || Anum == 28 || Anum == 31 || Anum ==34 || Anum == 37 || Anum == 38 || Anum == 1)){
+                    display1.drawBitmap(0, 0, OledDoubleTime, 128, 32, 1);
+    }else if(ATimeBolt == 1 && rollS == 6 && (Anum == 4 || Anum == 8 || Anum == 14 || Anum == 18 || Anum == 24 || Anum == 28 || Anum ==34 || Anum == 38)){
+                    display1.drawBitmap(0, 0, OledTimeBolt, 128, 32, 1);
+    }else{}
   display1.display();
-  delay(1000);
+  delay(500);
+    rollS=0;
+  AHoldInTime = 0;
+  AToxicZone = 0;
+  ARewindTime = 0;
+  ADoubleTime = 0;
+  ATimeBolt = 0;
+
  }   //Check Freze
+ 
+ 
  }while (next < 1);
 }
 
@@ -1510,20 +1844,20 @@ void BOperation(){
  
 do {
 XFreze = XFreze + 1 ;
-
+BFreze=XFreze;
+ Serial.println(BFreze);
 if (XFreze<1) {
-next++;
+      next++;
 Serial.println("\tFreze hold for next round");
-
 }
 
 else if (XFreze>0) {
-roll=random(1,6);
+roll=random(1,7);
 
-while (digitalRead(ButtonBlack)==0) {
+while (digitalRead(ButtonBlue)==0) {
 //จอบอกให้กดปุ่ม 
 Serial.println("\t\tPush Button to play");
-delay(1000);
+delay(500);
 }
 Bnum+=roll;
  Xnum=Bnum;
@@ -1532,6 +1866,7 @@ Bnum+=roll;
  XGem=BGem;
  XShield=BShield;
  Xstart=Bstart;
+  XFreze=BFreze;
 
 while (Xnum>40) {
 
@@ -1577,27 +1912,43 @@ Serial.println(Xnum);
         {
             //สุ่มสกิล
             //กดปุ่ม
-            roll = random(1,6);
-            while (digitalRead(ButtonBlack)==0) {
+            rollS = random(1,7);
+            while (digitalRead(ButtonBlue)==0) {
             //จอบอกให้กดปุ่ม
             Serial.println("\t\tPush Button to play");
-            delay(1000);
+            delay(500);
             }
-            Serial.println(roll);
-            if(roll == 1)   //Freeze
-            {
-                XFreze = (XFreze * 0) - 1 ;
+            Serial.println(rollS);
+            if(rollS == 1)   //Freeze
+            {   
+                BHoldInTime = 1;
+
+                XFreze = - 1 ;
+                BFreze=XFreze;
                 Serial.println("\t*Freze*");
+                TCA9548A(2);
+                display2.clearDisplay();
+                display2.setCursor(27,11);
+                display2.setTextColor(1);
+                display2.setTextSize(2);
+                display2.println("Freze");
+                //display2.println(BFreze);
+                display2.display();
+                break;
                 //next
             }
-            else if (roll == 2)     //Toxic
-            {
+            else if (rollS == 2)     //Toxic
+            {   
+                BToxicZone = 1;
+
                 XHp = XHp - 2 ;
                 Serial.println("\t*Toxic*");
                 //next
             }
-            else if (roll == 3)     // Rewind
-            {
+            else if (rollS == 3)     // Rewind
+            {   
+                BRewindTime = 1 ;
+
                 Serial.println("\t*Rewind*");
                 if(Xnum == 4||Xnum == 14||Xnum == 24||Xnum == 34)   // GetGem
                 {
@@ -1656,14 +2007,19 @@ Serial.println(Xnum);
                 }
                 
             }
-            else if (roll == 4)     // Shield
+            else if (rollS == 4)     // Shield
             {
                 XShield = 1 ;
                 Serial.println("\t*Get Shield*");
+                TCA9548A(2);
+                Status_Shield2();
+                display2.display();
                 //next
             }
-            else if (roll == 5)     //Triple
-            {
+            else if (rollS == 5)     //Triple
+            {   
+                BDoubleTime = 1;
+
                 Serial.println("\t*Triple*");
                 if(Xnum == 8||Xnum == 18||Xnum == 28||Xnum == 38)   // Door
                 {
@@ -1724,8 +2080,10 @@ Serial.println(Xnum);
                 //next
             }
 
-            else if (roll == 6)     //Power shot
-            {
+            else if (rollS == 6)     //Power shot
+            {   
+                BTimeBolt = 1 ;
+
                 Serial.println("\t*Power Shot*");
                 if(Xnum == 4||Xnum == 8)
                 {
@@ -1915,13 +2273,49 @@ Bnum=Xnum;
  BFreze=XFreze;
  Serial.print("\tYour position = ");
  Serial.print(Bnum);
+   if(roll == 1){
+      TCA9548A(0);
+      display0.clearDisplay();
+      delay(100);
+      display0.drawBitmap(0, 0, OneDice, 128, 64, 1);
+      display0.display();
+  }else if(roll == 2){
+      TCA9548A(0);
+      display0.clearDisplay();
+      delay(100);
+      display0.drawBitmap(0, 0, TwoDice, 128, 64, 1);
+      display0.display();
+  }else if(roll == 3){
+      TCA9548A(0);
+      display0.clearDisplay();
+      delay(100);
+      display0.drawBitmap(0, 0, ThreeDice, 128, 64, 1);
+      display0.display();
+  }else if(roll == 4){
+      TCA9548A(0);
+      display0.clearDisplay();
+      delay(100);
+      display0.drawBitmap(0, 0, FourDice, 128, 64, 1);
+      display0.display();
+  }else if(roll == 5){
+      TCA9548A(0);
+      display0.clearDisplay();
+      delay(100);
+      display0.drawBitmap(0, 0, FiveDice, 128, 64, 1);
+      display0.display();
+  }else if(roll == 6){
+      TCA9548A(0);
+      display0.clearDisplay();
+      delay(100);
+      display0.drawBitmap(0, 0, SixDice, 128, 64, 1);
+      display0.display();
+  }
   TCA9548A(2);
   display2.clearDisplay();
-  display2.drawBitmap(0, 0, OledToxicZone, 128, 32, 1);
   display2.setCursor(0, 1);
   display2.setTextColor(1);
   display2.setTextSize(1);
-  display2.println("P1");
+  display2.println("P2");
   //
   display2.setCursor(0, 13);
   display2.setTextColor(1);
@@ -1945,7 +2339,7 @@ Bnum=Xnum;
   display2.setTextColor(2);
   display2.setTextSize(3);
   display2.println("(  )");
-  display2.setCursor(60, 0);
+  display2.setCursor(53, 0);
   display2.setTextColor(1);
   display2.setTextSize(3);
   display2.println(Bnum);
@@ -1958,20 +2352,39 @@ Bnum=Xnum;
   display2.setTextColor(1,0);
   display2.setTextSize(1);
   display2.println(BDoor);
+  //
+  if (BShield == 1) {
+  Status_Shield2();
+  }
+  if(BHoldInTime ==  1 && rollS == 1 && (Bnum == 4 || Bnum == 8 || Bnum == 14 || Bnum == 18 || Bnum == 24 || Bnum == 28 || Bnum ==34 || Bnum == 38)){
+                display2.drawBitmap(0, 0, OledHoldInTime, 128, 32, 1);
+    }else if(BToxicZone == 1 && rollS == 2 && (Bnum == 4 || Bnum == 8 || Bnum == 14 || Bnum == 18 || Bnum == 24 || Bnum == 28 || Bnum ==34 || Bnum == 38)){
+                display2.drawBitmap(0, 0, OledToxicZone, 128, 32, 1);
+    }else if(BRewindTime== 1 && rollS == 3 && (Bnum == 4 || Bnum == 8 || Bnum == 14 || Bnum == 18 || Bnum == 24 || Bnum == 28 || Bnum ==34 || Bnum == 38 || Bnum == 3 || Bnum == 7 || Bnum == 13 || Bnum == 17 || Bnum == 23 || Bnum == 27 || Bnum == 33 || Bnum == 37)){
+                display2.drawBitmap(0, 0, OledRewindTime, 128, 32, 1);
+    }else if(rollS == 4 && (Bnum == 4 || Bnum == 8 || Bnum == 14 || Bnum == 18 || Bnum == 24 || Bnum == 28 || Bnum ==34 || Bnum == 38)){
+                display2.drawBitmap(0, 0, OledProtectYourTime, 128, 32, 1);
+    }else if(BDoubleTime == 1 && rollS == 5 && (Bnum == 4 || Bnum ==7 || Bnum == 8 || Bnum == 11 || Bnum == 14 || Bnum == 17 || Bnum == 18 || Bnum == 21 || Bnum == 24 || Bnum == 27 || Bnum == 28 || Bnum == 31 || Bnum ==34 || Bnum == 37 || Bnum == 38 || Bnum == 1)){
+                display2.drawBitmap(0, 0, OledDoubleTime, 128, 32, 1);
+    }else if(BTimeBolt == 1 && rollS == 6 && (Bnum == 4 || Bnum == 8 || Bnum == 14 || Bnum == 18 || Bnum == 24 || Bnum == 28 || Bnum ==34 || Bnum == 38)){
+                display2.drawBitmap(0, 0, OledTimeBolt, 128, 32, 1);
+    }
   display2.display();
- delay(1000);
+  delay(500);
+    rollS=0;
+    BHoldInTime = 0;
+    BToxicZone = 0;
+    BRewindTime = 0;
+    BDoubleTime = 0;
+    BTimeBolt = 0;
+
     }   //Check Freze
+    
+    
  }while (next < 1);
 }
 
-
-
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
 
 void COperation(){
 Xnum=0;
@@ -1984,20 +2397,20 @@ Xnum=0;
  
 do {
 XFreze = XFreze + 1 ;
-
+CFreze=XFreze;
+ Serial.println(CFreze);
 if (XFreze<1) {
-next++;
+      next++;
 Serial.println("\tFreze hold for next round");
-
 }
 
 else if (XFreze>0) {
-roll=random(1,6);
+roll=random(1,7);
 
 while (digitalRead(ButtonGreen)==0) {
 //จอบอกให้กดปุ่ม 
 Serial.println("\t\tPush Button to play");
-delay(1000);
+delay(500);
 }
 Cnum+=roll;
  Xnum=Cnum;
@@ -2006,6 +2419,7 @@ Cnum+=roll;
  XGem=CGem;
  XShield=CShield;
  Xstart=Cstart;
+  XFreze=CFreze;
 
 while (Xnum>40) {
 
@@ -2051,27 +2465,43 @@ Serial.println(Xnum);
         {
             //สุ่มสกิล
             //กดปุ่ม
-            roll = random(1,6);
+            rollS = random(1,7);
             while (digitalRead(ButtonGreen)==0) {
             //จอบอกให้กดปุ่ม
             Serial.println("\t\tPush Button to play");
-            delay(1000);
+            delay(500);
             }
-            Serial.println(roll);
-            if(roll == 1)   //Freeze
-            {
-                XFreze = (XFreze * 0) - 1 ;
+            Serial.println(rollS);
+            if(rollS == 1)   //Freeze
+            {   
+                CHoldInTime = 1 ;
+
+                XFreze = - 1 ;
+                CFreze=XFreze;
                 Serial.println("\t*Freze*");
+                TCA9548A(3);
+                display3.clearDisplay();
+                display3.setCursor(27,11);
+                display3.setTextColor(1);
+                display3.setTextSize(2);
+                display3.println("Freze");
+                //display3.println(CFreze);
+                display3.display();
+                break;;
                 //next
             }
-            else if (roll == 2)     //Toxic
-            {
+            else if (rollS == 2)     //Toxic
+            {   
+                CToxicZone = 1 ;
+
                 XHp = XHp - 2 ;
                 Serial.println("\t*Toxic*");
                 //next
             }
-            else if (roll == 3)     // Rewind
-            {
+            else if (rollS == 3)     // Rewind
+            {   
+                CRewindTime = 1 ;
+
                 Serial.println("\t*Rewind*");
                 if(Xnum == 4||Xnum == 14||Xnum == 24||Xnum == 34)   // GetGem
                 {
@@ -2130,14 +2560,19 @@ Serial.println(Xnum);
                 }
                 
             }
-            else if (roll == 4)     // Shield
+            else if (rollS == 4)     // Shield
             {
                 XShield = 1 ;
                 Serial.println("\t*Get Shield*");
+                TCA9548A(3);
+                Status_Shield3();
+                display3.display();
                 //next
             }
-            else if (roll == 5)     //Triple
-            {
+            else if (rollS == 5)     //Triple
+            {   
+                CDoubleTime = 1 ;
+
                 Serial.println("\t*Triple*");
                 if(Xnum == 8||Xnum == 18||Xnum == 28||Xnum == 38)   // Door
                 {
@@ -2198,8 +2633,10 @@ Serial.println(Xnum);
                 //next
             }
 
-            else if (roll == 6)     //Power shot
-            {
+            else if (rollS == 6)     //Power shot
+            {   
+                CTimeBolt = 1 ;
+
                 Serial.println("\t*Power Shot*");
                 if(Xnum == 4||Xnum == 8)
                 {
@@ -2389,28 +2826,122 @@ Cnum=Xnum;
  CFreze=XFreze;
  Serial.print("\tYour position = ");
  Serial.print(Cnum);
+    if(roll == 1){
+      TCA9548A(0);
+      display0.clearDisplay();
+      delay(100);
+      display0.drawBitmap(0, 0, OneDice, 128, 64, 1);
+      display0.display();
+  }else if(roll == 2){
+      TCA9548A(0);
+      display0.clearDisplay();
+      delay(100);
+      display0.drawBitmap(0, 0, TwoDice, 128, 64, 1);
+      display0.display();
+  }else if(roll == 3){
+      TCA9548A(0);
+      display0.clearDisplay();
+      delay(100);
+      display0.drawBitmap(0, 0, ThreeDice, 128, 64, 1);
+      display0.display();
+  }else if(roll == 4){
+      TCA9548A(0);
+      display0.clearDisplay();
+      delay(100);
+      display0.drawBitmap(0, 0, FourDice, 128, 64, 1);
+      display0.display();
+  }else if(roll == 5){
+      TCA9548A(0);
+      display0.clearDisplay();
+      delay(100);
+      display0.drawBitmap(0, 0, FiveDice, 128, 64, 1);
+      display0.display();
+  }else if(roll == 6){
+      TCA9548A(0);
+      display0.clearDisplay();
+      delay(100);
+      display0.drawBitmap(0, 0, SixDice, 128, 64, 1);
+      display0.display();
+  }
   TCA9548A(3);
-  display3.setCursor(54, 0);
+  display3.clearDisplay();
+  display3.setCursor(0, 1);
+  display3.setTextColor(1);
+  display3.setTextSize(1);
+  display3.println("P3");
+  //
+  display3.setCursor(0, 13);
+  display3.setTextColor(1);
+  display3.setTextSize(1);
+  display3.println("HP");
+  display3.setCursor(15, 13);
+  display3.setTextColor(1);
+  display3.setTextSize(1);
+  display3.println(CHp);
+  //
+  display3.setCursor(0, 25);
+  display3.setTextColor(1);
+  display3.setTextSize(1); 
+  display3.println("GEM");
+  display3.setCursor(22, 25);
+  display3.setTextColor(1);
+  display3.setTextSize(1); 
+  display3.println(CGem);
+  //
+  display3.setCursor(34, 0);
+  display3.setTextColor(2);
+  display3.setTextSize(3);
+  display3.println("(  )");
+  display3.setCursor(53, 0);
   display3.setTextColor(1);
   display3.setTextSize(3);
   display3.println(Cnum);
+  //
+  display3.setCursor(54, 25);
+  display3.setTextColor(1,0);
+  display3.setTextSize(1);
+  display3.println("[   ]");
+  display3.setCursor(67, 25);
+  display3.setTextColor(1,0);
+  display3.setTextSize(1);
+  display3.println(CDoor);
+  //
+  if (CShield == 1) {
+  Status_Shield3();
+  }
+    if(CHoldInTime == 1 && rollS == 1 && (Cnum == 4 || Cnum == 8 || Cnum == 14 || Cnum == 18 || Cnum == 24 || Cnum == 28 || Cnum ==34 || Cnum == 38)){
+    display3.drawBitmap(0, 0, OledHoldInTime, 128, 32, 1);
+    }else if(CToxicZone == 1 && rollS == 2 && (Cnum == 4 || Cnum == 8 || Cnum == 14 || Cnum == 18 || Cnum == 24 || Cnum == 28 || Cnum ==34 || Cnum == 38)){
+    display3.drawBitmap(0, 0, OledToxicZone, 128, 32, 1);
+    }else if(CRewindTime == 1 && rollS == 3 && (Cnum == 4 || Cnum == 8 || Cnum == 14 || Cnum == 18 || Cnum == 24 || Cnum == 28 || Cnum ==34 || Cnum == 38 || Cnum == 3 || Cnum == 7 || Cnum == 13 || Cnum == 17 || Cnum == 23 || Cnum == 27 || Cnum == 33 || Cnum == 37)){
+    display3.drawBitmap(0, 0, OledRewindTime, 128, 32, 1);
+    }else if(rollS == 4 && (Cnum == 4 || Cnum == 8 || Cnum == 14 || Cnum == 18 || Cnum == 24 || Cnum == 28 || Cnum ==34 || Cnum == 38)){
+    display3.drawBitmap(0, 0, OledProtectYourTime, 128, 32, 1);
+    }else if(CDoubleTime == 1 && rollS == 5 && (Cnum == 4 || Cnum ==7 || Cnum == 8 || Cnum == 11 || Cnum == 14 || Cnum == 17 || Cnum == 18 || Cnum == 21 || Cnum == 24 || Cnum == 27 || Cnum == 28 || Cnum == 31 || Cnum ==34 || Cnum == 37 || Cnum == 38 || Cnum == 1)){
+    display3.drawBitmap(0, 0, OledDoubleTime, 128, 32, 1);
+    }else if(CTimeBolt == 1 && rollS == 6 && (Cnum == 4 || Cnum == 8 || Cnum == 14 || Cnum == 18 || Cnum == 24 || Cnum == 28 || Cnum ==34 || Cnum == 38)){
+    display3.drawBitmap(0, 0, OledTimeBolt, 128, 32, 1);
+    }
   display3.display();
- delay(1000);
+  delay(500);
+    rollS=0;
+    CHoldInTime = 0;
+    CToxicZone = 0;
+    CRewindTime = 0;
+    CDoubleTime = 0;
+    CTimeBolt = 0;
+
     }   //Check Freze
+    
  }while (next < 1);
 }
-
-
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-
-
-
 void DOperation(){
-Xnum=0;
+ Xnum=0;
  XHp=0;
  XDoor=0;
  XGem=0;
@@ -2419,21 +2950,21 @@ Xnum=0;
  Xstart=0;
  
 do {
-XFreze = XFreze + 1 ;
-
+XFreze = DFreze + 1 ;
+DFreze=XFreze;
+ Serial.println(DFreze);
 if (XFreze<1) {
-next++;
+    next++;
 Serial.println("\tFreze hold for next round");
-
 }
 
 else if (XFreze>0) {
-roll=random(1,6);
+roll=random(1,7);
 
 while (digitalRead(ButtonRed)==0) {
 //จอบอกให้กดปุ่ม 
 Serial.println("\t\tPush Button to play");
-delay(1000);
+delay(500);
 }
 Dnum+=roll;
  Xnum=Dnum;
@@ -2442,6 +2973,7 @@ Dnum+=roll;
  XGem=DGem;
  XShield=DShield;
  Xstart=Dstart;
+ XFreze=DFreze;
 
 while (Xnum>40) {
 
@@ -2460,6 +2992,7 @@ Serial.println(Xnum);
             XDoor = XDoor+XGem ;
             XGem  = 0 ;
             Serial.println(" Send Gem to door ");
+
         }
         else if(Xnum==2||Xnum==12||Xnum==22||Xnum==32)
         {
@@ -2487,27 +3020,44 @@ Serial.println(Xnum);
         {
             //สุ่มสกิล
             //กดปุ่ม
-            roll = random(1,6);
+            rollS = random(1,7);
             while (digitalRead(ButtonRed)==0) {
             //จอบอกให้กดปุ่ม
             Serial.println("\t\tPush Button to play");
-            delay(1000);
+            delay(500);
             }
-            Serial.println(roll);
-            if(roll == 1)   //Freeze
+            Serial.println(rollS);
+            if(rollS == 1)   //Freeze
             {
-                XFreze = (XFreze * 0) - 1 ;
+                DHoldInTime = 1 ;
+
+                XFreze = - 1 ;
+                DFreze=XFreze;
                 Serial.println("\t*Freze*");
+                TCA9548A(4);
+                display4.clearDisplay();
+                display4.setCursor(27,11);
+                display4.setTextColor(1);
+                display4.setTextSize(2);
+                display4.println("Freze");
+                //display4.println(DFreze);
+                display4.display();
+                
+               break;;
                 //next
             }
-            else if (roll == 2)     //Toxic
-            {
+            else if (rollS == 2)     //Toxic
+            {   
+                DToxicZone = 1 ;
+
                 XHp = XHp - 2 ;
                 Serial.println("\t*Toxic*");
                 //next
             }
-            else if (roll == 3)     // Rewind
-            {
+            else if (rollS == 3)     // Rewind
+            {   
+                DRewindTime = 1 ;
+
                 Serial.println("\t*Rewind*");
                 if(Xnum == 4||Xnum == 14||Xnum == 24||Xnum == 34)   // GetGem
                 {
@@ -2566,14 +3116,18 @@ Serial.println(Xnum);
                 }
                 
             }
-            else if (roll == 4)     // Shield
+            else if (rollS == 4)     // Shield
             {
                 XShield = 1 ;
                 Serial.println("\t*Get Shield*");
+                TCA9548A(4);
+                Status_Shield4();
+                display4.display();
                 //next
             }
-            else if (roll == 5)     //Triple
-            {
+            else if (rollS == 5)     //Triple
+            {   
+                DDoubleTime = 1 ;
                 Serial.println("\t*Triple*");
                 if(Xnum == 8||Xnum == 18||Xnum == 28||Xnum == 38)   // Door
                 {
@@ -2634,8 +3188,10 @@ Serial.println(Xnum);
                 //next
             }
 
-            else if (roll == 6)     //Power shot
+            else if (rollS == 6)     //Power shot
             {
+                DTimeBolt = 1 ;
+
                 Serial.println("\t*Power Shot*");
                 if(Xnum == 4||Xnum == 8)
                 {
@@ -2825,18 +3381,261 @@ Dnum=Xnum;
  DFreze=XFreze;
  Serial.print("\tYour position = ");
  Serial.print(Dnum);
+    if(roll == 1){
+      TCA9548A(0);
+      display0.clearDisplay();
+      delay(100);
+      display0.drawBitmap(0, 0, OneDice, 128, 64, 1);
+      display0.display();
+  }else if(roll == 2){
+      TCA9548A(0);
+      display0.clearDisplay();
+      delay(100);
+      display0.drawBitmap(0, 0, TwoDice, 128, 64, 1);
+      display0.display();
+  }else if(roll == 3){
+      TCA9548A(0);
+      display0.clearDisplay();
+      delay(100);
+      display0.drawBitmap(0, 0, ThreeDice, 128, 64, 1);
+      display0.display();
+  }else if(roll == 4){
+      TCA9548A(0);
+      display0.clearDisplay();
+      delay(100);
+      display0.drawBitmap(0, 0, FourDice, 128, 64, 1);
+      display0.display();
+  }else if(roll == 5){
+      TCA9548A(0);
+      display0.clearDisplay();
+      delay(100);
+      display0.drawBitmap(0, 0, FiveDice, 128, 64, 1);
+      display0.display();
+  }else if(roll == 6){
+      TCA9548A(0);
+      display0.clearDisplay();
+      delay(100);
+      display0.drawBitmap(0, 0, SixDice, 128, 64, 1);
+      display0.display();
+  }
  TCA9548A(4);
-  display4.setCursor(54, 0);
+  display4.clearDisplay();
+  display4.setCursor(0, 1);
+  display4.setTextColor(1);
+  display4.setTextSize(1);
+  display4.println("P4");
+  //
+  display4.setCursor(0, 13);
+  display4.setTextColor(1);
+  display4.setTextSize(1);
+  display4.println("HP");
+  display4.setCursor(15, 13);
+  display4.setTextColor(1);
+  display4.setTextSize(1);
+  display4.println(DHp);
+  //
+  display4.setCursor(0, 25);
+  display4.setTextColor(1);
+  display4.setTextSize(1); 
+  display4.println("GEM");
+  display4.setCursor(22, 25);
+  display4.setTextColor(1);
+  display4.setTextSize(1); 
+  display4.println(DGem);
+  //
+  display4.setCursor(34, 0);
+  display4.setTextColor(2);
+  display4.setTextSize(3);
+  display4.println("(  )");
+  display4.setCursor(53, 0);
   display4.setTextColor(1);
   display4.setTextSize(3);
   display4.println(Dnum);
+  //
+  display4.setCursor(54, 25);
+  display4.setTextColor(1,0);
+  display4.setTextSize(1);
+  display4.println("[   ]");
+  display4.setCursor(67, 25);
+  display4.setTextColor(1,0);
+  display4.setTextSize(1);
+  display4.println(DDoor);
+  //
+  if (DShield == 1) {
+  Status_Shield4();
+  }else  {
+  }
+  if(DHoldInTime == 1 && rollS == 1 && (Dnum == 4 || Dnum == 8 || Dnum == 14 || Dnum == 18 || Dnum == 24 || Dnum == 28 || Dnum ==34 || Dnum == 38)){
+                display4.drawBitmap(0, 0, OledHoldInTime, 128, 32, 1);
+    }else if(DToxicZone == 1 && rollS == 2 && (Dnum == 4 || Dnum == 8 || Dnum == 14 || Dnum == 18 || Dnum == 24 || Dnum == 28 || Dnum ==34 || Dnum == 38)){
+                display4.drawBitmap(0, 0, OledToxicZone, 128, 32, 1);
+    }else if(DRewindTime == 1 && rollS == 3 && (Dnum == 4 || Dnum == 8 || Dnum == 14 || Dnum == 18 || Dnum == 24 || Dnum == 28 || Dnum ==34 || Dnum == 38 || Dnum == 3 || Dnum == 7 || Dnum == 13 || Dnum == 17 || Dnum == 23 || Dnum == 27 || Dnum ==33 || Dnum == 37)){
+                display4.drawBitmap(0, 0, OledRewindTime, 128, 32, 1);
+    }else if(rollS == 4 && (Dnum == 4 || Dnum == 8 || Dnum == 14 || Dnum == 18 || Dnum == 24 || Dnum == 28 || Dnum ==34 || Dnum == 38)){
+                display4.drawBitmap(0, 0, OledProtectYourTime, 128, 32, 1);
+    }else if(DDoubleTime == 1 && rollS == 5 && (Dnum == 4 || Dnum ==7 || Dnum == 8 || Dnum == 11 || Dnum == 14 || Dnum == 17 || Dnum == 18 || Dnum == 21 || Dnum == 24 || Dnum == 27 || Dnum == 28 || Dnum == 31 || Dnum == 34 || Dnum == 37 || Dnum == 38 || Dnum == 1)){
+                display4.drawBitmap(0, 0, OledDoubleTime, 128, 32, 1);
+    }else if(DTimeBolt == 1 && rollS == 6 && (Dnum == 4 || Dnum == 8 || Dnum == 14 || Dnum == 18 || Dnum == 24 || Dnum == 28 || Dnum ==34 || Dnum == 38)){
+                display4.drawBitmap(0, 0, OledTimeBolt, 128, 32, 1);
+    }
   display4.display();
- delay(1000);
-    }   //Check Freze
+  delay(500);
+    rollS=0;
+    DHoldInTime = 0;
+    DToxicZone = 0;
+    DRewindTime = 0;
+    DDoubleTime = 0;
+    DTimeBolt = 0;
+    }   //Check Freze 
+    
  }while (next < 1);
 }
 
+//function-----------------------------------------------------------------------------------------------------------------------
+//TheDimenstion
+void TheDimenstion0(){
+  display0.clearDisplay();
+  display0.setCursor(0, 15); 
+  display0.setTextColor(1,0);
+  display0.setTextSize(2);
+  display0.print("THE");
+  display0.setCursor(0, 40);
+  display0.println("DIMENSTION");
+}
+void TheDimenstion1 (){
+  display1.clearDisplay();
+  display1.setCursor(25,19);
+  display1.setTextColor(1);
+  display1.setTextSize(1);
+  display1.println("THE DIMENSION");
+}
+void TheDimenstion2(){
+  display2.clearDisplay();
+  display2.setCursor(25, 19);
+  display2.setTextColor(1);
+  display2.setTextSize(1);
+  display2.println("THE DIMENDTON");
+}
+void TheDimenstion3(){
+  display3.clearDisplay();
+  display3.setCursor(25,19);
+  display3.setTextColor(1);
+  display3.setTextSize(1);
+  display3.println("THE DIMENSION");
+}
+void TheDimenstion4(){
+  display4.clearDisplay();
+  display4.setCursor(25, 19);
+  display4.setTextColor(1);
+  display4.setTextSize(1);
+  display4.println("THE DIMENSION");
+}
 
-
-
-
+void SetPlayer1(){
+  display1.clearDisplay();
+  display1.setCursor(0, 1);
+  display1.setTextColor(1);
+  display1.setTextSize(1);
+  display1.println("P1");
+  display1.setCursor(0, 13);
+  display1.setTextColor(1);
+  display1.setTextSize(1);
+  display1.println("HP");
+  display1.setCursor(0, 25);
+  display1.setTextColor(1);
+  display1.setTextSize(1); 
+  display1.println("GEM");
+  display1.setCursor(34, 0);
+  display1.setTextColor(2);
+  display1.setTextSize(3);
+  display1.println("(  )");
+  display1.setCursor(54, 25);
+  display1.setTextColor(1,0);
+  display1.setTextSize(1);
+  display1.println("[   ]");
+}
+void SetPlayer2(){
+  display2.clearDisplay();
+  display2.setCursor(0, 1);
+  display2.setTextColor(1);
+  display2.setTextSize(1);
+  display2.println("P2");
+  display2.setCursor(0, 13);
+  display2.setTextColor(1);
+  display2.setTextSize(1);
+  display2.println("HP");
+  display2.setCursor(0, 25);
+  display2.setTextColor(1);
+  display2.setTextSize(1); 
+  display2.println("GEM");
+  display2.setCursor(34, 0);
+  display2.setTextColor(2);
+  display2.setTextSize(3);
+  display2.println("(  )");
+  display2.setCursor(54, 25);
+  display2.setTextColor(1,0);
+  display2.setTextSize(1);
+  display2.println("[   ]");
+}
+void SetPlayer3(){
+  display3.clearDisplay();
+  display3.setCursor(0, 1);
+  display3.setTextColor(1);
+  display3.setTextSize(1);
+  display3.println("P3");
+  display3.setCursor(0, 13);
+  display3.setTextColor(1);
+  display3.setTextSize(1);
+  display3.println("HP");
+  display3.setCursor(0, 25);
+  display3.setTextColor(1);
+  display3.setTextSize(1); 
+  display3.println("GEM");
+  display3.setCursor(34, 0);
+  display3.setTextColor(2);
+  display3.setTextSize(3);
+  display3.println("(  )");
+  display3.setCursor(54, 25);
+  display3.setTextColor(1,0);
+  display3.setTextSize(1);
+  display3.println("[   ]");
+}
+void SetPlayer4(){
+  display4.clearDisplay();
+  display4.setCursor(0, 1);
+  display4.setTextColor(1);
+  display4.setTextSize(1);
+  display4.println("P4");
+  display4.setCursor(0, 13);
+  display4.setTextColor(1);
+  display4.setTextSize(1);
+  display4.println("HP");
+  display4.setCursor(0, 25);
+  display4.setTextColor(1);
+  display4.setTextSize(1); 
+  display4.println("GEM");
+  display4.setCursor(34, 0);
+  display4.setTextColor(2);
+  display4.setTextSize(3);
+  display4.println("(  )");
+  display4.setCursor(54, 25);
+  display4.setTextColor(1,0);
+  display4.setTextSize(1);
+  display4.println("[   ]");
+}
+void Status_Shield4(){
+  display4.fillTriangle(15,3,17,1,19,3,1); //.drawTriangle(x0,y0,x1,y1,x2,y2,color);
+  display4.fillTriangle(15,3,17,6,19,3,1);
+}
+void Status_Shield3(){
+  display3.fillTriangle(15,3,17,1,19,3,1); //.drawTriangle(x0,y0,x1,y1,x2,y2,color);
+  display3.fillTriangle(15,3,17,6,19,3,1);
+}
+void Status_Shield2(){
+  display2.fillTriangle(15,3,17,1,19,3,1); //.drawTriangle(x0,y0,x1,y1,x2,y2,color);
+  display2.fillTriangle(15,3,17,6,19,3,1);
+}
+void Status_Shield1(){
+  display1.fillTriangle(15,3,17,1,19,3,1); //.drawTriangle(x0,y0,x1,y1,x2,y2,color);
+  display1.fillTriangle(15,3,17,6,19,3,1);
+}
