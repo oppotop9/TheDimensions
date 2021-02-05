@@ -108,6 +108,11 @@ int RGB_B_Player3 = 10;
 int RGB_R_Player4 = 11;
 int RGB_G_Player4 = 12;
 int RGB_B_Player4 = 13;
+
+int Abosslight = 30;
+int Bbosslight = 32;
+int Cbosslight = 34;
+int Dbosslight = 36;
 //Dice For Random-----------------------------------------------------------------------------
 //1
 const unsigned char OneDice [] PROGMEM = {
@@ -767,6 +772,10 @@ pinMode(RGB_B_Player3,OUTPUT);
 pinMode(RGB_R_Player4,OUTPUT);
 pinMode(RGB_G_Player4,OUTPUT);
 pinMode(RGB_B_Player4,OUTPUT);
+pinMode (Abosslight,OUTPUT);
+pinMode (Bbosslight,OUTPUT);
+pinMode (Cbosslight,OUTPUT);
+pinMode (Dbosslight,OUTPUT);
 
 //------------------------------------------------------
 Anum=Astart; //player1
@@ -1017,7 +1026,7 @@ SetPlayer4();
   display4.display();
 }
 analogWrite(RGB_R_Player1,255);
-analogWrite(RGB_G_Player1,210);
+analogWrite(RGB_G_Player1,150);
 analogWrite(RGB_B_Player1,0);
 analogWrite(RGB_R_Player2,150);
 analogWrite(RGB_G_Player2,0);
@@ -1025,8 +1034,8 @@ analogWrite(RGB_B_Player2,255);
 analogWrite(RGB_R_Player3,0);
 analogWrite(RGB_G_Player3,255);
 analogWrite(RGB_B_Player3,0);
-analogWrite(RGB_R_Player4,255);
-analogWrite(RGB_G_Player4,140);
+analogWrite(RGB_R_Player4,245);
+analogWrite(RGB_G_Player4,51);
 analogWrite(RGB_B_Player4,0);
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
@@ -1037,6 +1046,10 @@ void loop(){
         BossB=1;
         BossC=1;
         BossD=1;
+        digitalWrite(Abosslight,1);
+        digitalWrite(Bbosslight,1);
+        digitalWrite(Cbosslight,1);
+        digitalWrite(Dbosslight,1);
         Serial.println("\tBoss Spawn");
         }
         if(AHp>0) {
@@ -1559,6 +1572,7 @@ Serial.println(Xnum);
                         Xnum = Xstart ;
                         XDoor = XDoor + XGem ;
                         XGem = 0 ;
+                        digitalWrite(Abosslight,0);
                         Serial.println("\t*Boss Die*");
                         //next
                     }
@@ -1577,6 +1591,7 @@ Serial.println(Xnum);
                         Xnum = Xstart ;
                         XDoor = XDoor + XGem ;
                         XGem = 0 ;
+                        digitalWrite(Bbosslight,0);
                         Serial.println("\t*Boss Die*");
                         //next
                     }
@@ -1594,6 +1609,7 @@ Serial.println(Xnum);
                         Xnum = Xstart ;
                         XDoor = XDoor + XGem ;
                         XGem = 0 ;
+                        digitalWrite(Cbosslight,0);
                         Serial.println("\t*Boss die*");
                         //next
                     }
@@ -1612,6 +1628,7 @@ Serial.println(Xnum);
                         Xnum = Xstart ;
                         XDoor = XDoor + XGem ;
                         XGem = 0 ;
+                        digitalWrite(Dbosslight,0);
                         Serial.println("\t*Boss die*");
                         //next
                     }
@@ -2119,6 +2136,7 @@ Serial.println(Xnum);
                         Xnum = Xstart ;
                         XDoor = XDoor + XGem ;
                         XGem = 0 ;
+                        digitalWrite(Abosslight,0);
                         Serial.println("\t*Boss Die*");
                         //next
                     }
@@ -2137,6 +2155,7 @@ Serial.println(Xnum);
                         Xnum = Xstart ;
                         XDoor = XDoor + XGem ;
                         XGem = 0 ;
+                        digitalWrite(Bbosslight,0);
                         Serial.println("\t*Boss Die*");
                         //next
                     }
@@ -2154,6 +2173,7 @@ Serial.println(Xnum);
                         Xnum = Xstart ;
                         XDoor = XDoor + XGem ;
                         XGem = 0 ;
+                        digitalWrite(Cbosslight,0);
                         Serial.println("\t*Boss die*");
                         //next
                     }
@@ -2172,6 +2192,7 @@ Serial.println(Xnum);
                         Xnum = Xstart ;
                         XDoor = XDoor + XGem ;
                         XGem = 0 ;
+                        digitalWrite(Dbosslight,0);
                         Serial.println("\t*Boss die*");
                         //next
                     }
@@ -2672,6 +2693,7 @@ Serial.println(Xnum);
                         Xnum = Xstart ;
                         XDoor = XDoor + XGem ;
                         XGem = 0 ;
+                        digitalWrite(Abosslight,0);
                         Serial.println("\t*Boss Die*");
                         //next
                     }
@@ -2690,6 +2712,7 @@ Serial.println(Xnum);
                         Xnum = Xstart ;
                         XDoor = XDoor + XGem ;
                         XGem = 0 ;
+                        digitalWrite(Bbosslight,0);
                         Serial.println("\t*Boss Die*");
                         //next
                     }
@@ -2707,6 +2730,7 @@ Serial.println(Xnum);
                         Xnum = Xstart ;
                         XDoor = XDoor + XGem ;
                         XGem = 0 ;
+                        digitalWrite(Cbosslight,0);
                         Serial.println("\t*Boss die*");
                         //next
                     }
@@ -2725,6 +2749,7 @@ Serial.println(Xnum);
                         Xnum = Xstart ;
                         XDoor = XDoor + XGem ;
                         XGem = 0 ;
+                        digitalWrite(Dbosslight,0);
                         Serial.println("\t*Boss die*");
                         //next
                     }
@@ -3227,6 +3252,7 @@ Serial.println(Xnum);
                         Xnum = Xstart ;
                         XDoor = XDoor + XGem ;
                         XGem = 0 ;
+                        digitalWrite(Abosslight,0);
                         Serial.println("\t*Boss Die*");
                         //next
                     }
@@ -3245,6 +3271,7 @@ Serial.println(Xnum);
                         Xnum = Xstart ;
                         XDoor = XDoor + XGem ;
                         XGem = 0 ;
+                        digitalWrite(Bbosslight,0);
                         Serial.println("\t*Boss Die*");
                         //next
                     }
@@ -3262,6 +3289,7 @@ Serial.println(Xnum);
                         Xnum = Xstart ;
                         XDoor = XDoor + XGem ;
                         XGem = 0 ;
+                        digitalWrite(Cbosslight,0);
                         Serial.println("\t*Boss die*");
                         //next
                     }
@@ -3280,6 +3308,7 @@ Serial.println(Xnum);
                         Xnum = Xstart ;
                         XDoor = XDoor + XGem ;
                         XGem = 0 ;
+                        digitalWrite(Dbosslight,0);
                         Serial.println("\t*Boss die*");
                         //next
                     }
